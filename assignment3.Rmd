@@ -1,0 +1,260 @@
+
+---
+output: # rmarkdown::github_document
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 3.  Working with Data Frame. Base R Style"
+---
+
+***Note*:** *This assignment practices working with Data Frame using Base R.*
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment3.Rmd)) in Rstudio. 
+
+- Right under each question, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas under Assignment 3. 
+
+-------
+
+Problems
+-------
+ \
+
+1. Create the following data frame
+
+| Rank 	| Age 	| Name  	|
+|:------	|:-----	|:-------	|
+| 0    	| 28  	| Tom   	|
+| 1    	| 34  	| Jack  	|
+| 2    	| 29  	| Steve 	|
+| 3    	| 42  	| Ricky 	|
+
+```{r}
+R = c(0,1,2,3)
+A = c(28,34,29,42)
+N = c("Tom","Jack","Steve","Ricky")
+df = cbind(R,A,N)
+df
+```
+
+2. Use `read.csv` to import the Covid19 Vaccination data from WHO: [link](https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv).
+
+```{r}
+df=read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv")
+```
+
+2. Show the names of the variables in the data
+```{r}
+names(df)
+```
+
+3. How many columns and rows the data have? 
+```{r}
+ncol(df)
+```
+```{r}
+nrow(df)
+```
+4. How many missing values are there?  Show the missing values by columns.  What variable has the most number of missing values?
+```{r}
+sum(is.na(df))
+```
+```{r}
+colSums(is.na(df))
+```
+```{r}
+colMeans(is.na(df))
+```
+
+
+5. What is the class of the `date` column. Change the `date` columns to `date` type using the `as.Date` function. Show the new class of the `date` column. 
+
+```{r}
+names(df)[1] <- 'Date_report'
+class(df$Date_report)
+```
+```{r}
+str(df)
+```
+
+
+
+6. Capitalize the names of all the variables
+```{r}
+names(df)[1] <- 'DATE_REPORT'
+names(df)[2] <- 'STATE'
+names(df)[3] <- 'FIPS'
+names(df)[4] <- 'CASES'
+names(df)[5] <- 'DEATH'
+```
+
+
+7. Find the average number of cases per day. Find the maximum cases a day.  
+```{r}
+x=aggregate(df$CASES, by=list(DATE_REPORT=df$DATE_REPORT), FUN=mean)
+x$DATE_REPORT[x$x==max(x$x)]
+```
+8. How many states are there in the data?  
+```{r}
+length(unique(df$STATE))
+```
+
+
+9. Create a new variable `weekdays` to store the weekday for each rows. 
+
+```{r}
+df$DATE_REPORT = as.Date(df$DATE_REPORT)
+df$WEEK_DAY=weekdays(df$DATE_REPORT)
+```
+
+10. Create the categorical variable `death2` variable taking the values as follows
+```{r}
+DEATH2=c()
+
+for (x in df$DEATH){
+  if (x==0){
+    DEATH2=append(DEATH2,"no_death")
+  }
+  else{
+    DEATH2=append(DEATH2,"death")
+  }
+}
+df$DEATH2=DEATH2
+```
+
+- `has_death` if there is a death that day
+-  `no_death` if there is no death that day
+
+Find the frequency and relative frequency of `no_death` and `has_death`. 
+
+11. Find the first quartile (Q1), second quartile (Q2) and and third quartile (Q3) of the variable `death`. (Hint:  Use the `summary` function)
+
+```{r}
+summary(df$DEATH)
+```
+
+
+12. Create the categorical variable `death3` variable taking the values as follows
+
+- `low_death` if the number of deaths smaller than the 25 percentile (Q1)
+
+- `mid_death` if the number of deaths from Q1 to Q3
+
+- `high_death` if the number of deaths greater than Q3
+
+```{r}
+DEATH3=c()
+a=quantile(df$DEATH)[2]
+b=quantile(df$DEATH)[4]
+
+for (x in df$DEATH){
+  if (x<a){
+    y="low_death"
+  }
+  else if (x<b){
+    y="mid_death"
+  }
+  else {
+    y="high_death"
+  }
+  DEATH3=append(DEATH3,y)
+}
+df$DEATH3=DEATH3
+```
+
+
+13. Find the average cases in Rhode Island in 2021
+
+```{r}
+df$YEAR <- as.numeric(format(df$DATE_REPORT,'%Y'))
+mean(df$CASES[df$STATE=="Rhode Island"&df$YEAR=="2021"])
+```
+
+
+14. Find the median cases by weekdays in Rhode Island in 2021 
+
+```{r}
+x=subset(df,df$STATE=="Rhode Island"&df$YEAR==2021)
+y=aggregate(x$CASES, by=list(WEEK_DAY=x$WEEK_DAY), FUN=median)
+y
+```
+
+
+15. Compare the median cases in Rhode Island in June, July, August and September in 2021.
+
+```{r}
+df$MONTH <- as.numeric(format(df$DATE_REPORT,'%m'))
+x=subset(df,df$STATE=="Rhode Island"&df$YEAR==2021)
+y=aggregate(x$CASES, by=list(MONTH=x$MONTH), FUN=median)
+y[6:9,]
+```
+
+
+16.  Find your own dataset, import it and implement the following functions on the data
+
+- head
+- str
+- names
+- mean, min, max
+- table
+- is.na
+- colSums
+- class
+- cor
+- by
+- ifelse
+- case_when
+```{r}
+df=read.csv("C:\\Users\\Farida Yesmin\\Desktop\\M421 RStats\\aroshenoor.github.io\\titanic.csv")
+head(df)
+```
+```{r}
+str(df)
+```
+
+```{r}
+names(df)
+```
+```{r}
+mean(df$Age)
+```
+```{r}
+min(df$Age)
+```
+```{r}
+max(df$Age)
+```
+```{r}
+table(df$Age)
+```
+```{r}
+is.na(df$Age)
+```
+```{r}
+colSums(x = cbind(df$Age,df$Pclass,df$Fare),na.rm = TRUE,dims = 1)
+```
+```{r}
+class(df)
+```
+```{r}
+cor(cbind(df$Age,df$Fare,df$Pclass))
+```
+
+```{r}
+by(df$Fare,list(df$Pclass),mean)
+```
+
+
+17.  In the dataset in #16, practice the follows.  You can reuse the code of 16. 
+
+- Create a categorical variable from a continuous variable
+- From one categorical variable, create a new  categorical variable with fewer categories
+
+If you do not have a data, you can use [the titanic dataset](https://www.kaggle.com/competitions/titanic/overview), which can be downloaded at [this link](../data/titanic.csv)
