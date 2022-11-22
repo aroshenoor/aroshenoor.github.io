@@ -107,11 +107,19 @@ df %>%
 gg <- df %>% ggplot()+ 
     geom_bar(mapping=aes(x=Sex, fill=Survived))+
   theme_dark()
+<<<<<<< HEAD
 ggsave(filename = 'assignment7.png', plot = gg)
 ```
 
 
 [Link to the plot](assignment7.png)
+=======
+ggsave(filename = 'stuff.png', plot = gg)
+```
+
+
+[Link to the plot](stuff.png)
+>>>>>>> 6e0a23595e73705ad1b8c513b7a284efc8c953a2
 
 10. In this question, we will use  the Covid19 vaccination data for the US. The data and data dictionary can be found at the below link:
 
