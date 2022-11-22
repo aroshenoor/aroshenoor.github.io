@@ -12,5 +12,7 @@
 
 [Click here to find my Assignment 6](assignment6.html)
 
+[Click here to find my Assignment 7](assignment7.html)
+
 
 
